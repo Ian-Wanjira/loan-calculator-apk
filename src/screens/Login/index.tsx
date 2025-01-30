@@ -7,6 +7,7 @@ import Icon from '@react-native-vector-icons/feather';
 import {loginSchema} from '../../utils/validations';
 
 import {styles} from './styles';
+import {useAuth} from '../../context';
 
 interface LoginFormInputs {
   email: string;
@@ -16,7 +17,6 @@ interface LoginFormInputs {
 const Login: React.FC = () => {
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-
   const {
     control,
     handleSubmit,
@@ -24,9 +24,13 @@ const Login: React.FC = () => {
   } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
   });
+  const {login} = useAuth();
 
   const onSubmit = (data: LoginFormInputs) => {
-    Alert.alert('Login', `Email: ${data.email}, Password: ${data.password}`);
+    Alert.alert('Login', `Email: ${data.email}, Password: ${data.password}`, [
+      {text: 'OK', onPress: () => login()},
+      {text: 'Cancel', style: 'cancel'},
+    ]);
   };
 
   return (
