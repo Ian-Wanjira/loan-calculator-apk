@@ -5,7 +5,7 @@ import {AuthStack, RootStack} from './navigatiors';
 
 const App = () => (
   <NavigationContainer>
-    {false ? <AuthStack /> : <RootStack />}
+    {false ? <RootStack /> : <AuthStack />}
   </NavigationContainer>
 );
 

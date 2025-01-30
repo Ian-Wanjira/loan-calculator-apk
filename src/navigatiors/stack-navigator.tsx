@@ -6,7 +6,7 @@ import {Home, Login, Results} from '../screens';
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="Login" component={Login} />
   </Stack.Navigator>
 );
