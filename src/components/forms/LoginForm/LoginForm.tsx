@@ -16,9 +16,14 @@ interface LoginFormInputs {
 interface LoginFormProps {
   onSubmit: (data: LoginFormInputs) => void;
   isLoading: boolean;
+  onSignUpPress: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({onSubmit, isLoading}) => {
+const LoginForm: React.FC<LoginFormProps> = ({
+  onSubmit,
+  isLoading,
+  onSignUpPress,
+}) => {
   const {
     control,
     handleSubmit,
@@ -55,7 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({onSubmit, isLoading}) => {
       />
       <Text style={styles.signUpContainer}>
         Don't have an account?{' '}
-        <Text style={styles.signUpText} onPress={() => console.log('Sign up')}>
+        <Text style={styles.signUpText} onPress={onSignUpPress}>
           Sign up
         </Text>
       </Text>
