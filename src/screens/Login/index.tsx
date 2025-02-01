@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from './styles';
 import {useAuth} from '../../context';
 import {userLogin} from '../../apis/userApi';
+import {useNavigation} from '@react-navigation/native';
 
 interface LoginFormInputs {
   email: string;
@@ -15,6 +16,9 @@ interface LoginFormInputs {
 const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {login} = useAuth();
+
+  // Access navigation object from React Navigation
+  const navigation = useNavigation();
 
   const onSubmit = async (data: LoginFormInputs) => {
     setIsLoading(true);
@@ -36,7 +40,11 @@ const Login: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Loan Calculator</Text>
-      <LoginForm onSubmit={onSubmit} isLoading={isLoading} />
+      <LoginForm
+        onSubmit={onSubmit}
+        isLoading={isLoading}
+        onSignUpPress={() => navigation.navigate('Register')}
+      />
     </View>
   );
 };
