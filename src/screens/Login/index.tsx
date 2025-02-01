@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
-import {Alert, Text, View, TextInput, TouchableOpacity} from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
-import Icon from '@react-native-vector-icons/feather';
-
-import {loginSchema} from '../../utils/validations';
+import {Alert, Text, View} from 'react-native';
+import {LoginForm} from '../../components/forms/LoginForm/LoginForm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {styles} from './styles';
 import {useAuth} from '../../context';
+import {userLogin} from '../../apis/userApi';
 
 interface LoginFormInputs {
   email: string;
@@ -15,91 +13,30 @@ interface LoginFormInputs {
 }
 
 const Login: React.FC = () => {
-  const [focusedInput, setFocusedInput] = useState<string | null>(null);
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm<LoginFormInputs>({
-    resolver: yupResolver(loginSchema),
-  });
+  const [isLoading, setIsLoading] = useState(false);
   const {login} = useAuth();
 
-  const onSubmit = (data: LoginFormInputs) => {
-    Alert.alert('Login', `Email: ${data.email}, Password: ${data.password}`, [
-      {text: 'OK', onPress: () => login()},
-      {text: 'Cancel', style: 'cancel'},
-    ]);
+  const onSubmit = async (data: LoginFormInputs) => {
+    setIsLoading(true);
+    try {
+      const response = await userLogin(data.email, data.password);
+      // Store tokens in AsyncStorage
+      console.log('Access Token:', response.access);
+      console.log('Refresh Token:', response.refresh);
+      await AsyncStorage.setItem('accessToken', response.access);
+      await AsyncStorage.setItem('refreshToken', response.refresh);
+      login();
+    } catch (error) {
+      // Handle error within the component (e.g., set an error state)
+      console.error('Login failed:', error);
+      Alert.alert('Login Failed', 'An error occurred during login.');
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Loan Calculator</Text>
-
-      <Controller
-        control={control}
-        name="email"
-        render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={[
-              styles.input,
-              focusedInput === 'email' && styles.inputFocused,
-              errors.email && styles.inputError,
-            ]}
-            onBlur={() => {
-              onBlur();
-              setFocusedInput(null);
-            }}
-            onFocus={() => setFocusedInput('email')}
-            onChangeText={onChange}
-            value={value}
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        )}
-      />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-
-      <Controller
-        control={control}
-        name="password"
-        render={({field: {onChange, onBlur, value}}) => (
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={[
-                styles.input,
-                focusedInput === 'password' && styles.inputFocused,
-                errors.password && styles.inputError,
-              ]}
-              onBlur={() => {
-                onBlur();
-                setFocusedInput(null);
-              }}
-              onFocus={() => setFocusedInput('password')}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Password"
-              secureTextEntry={secureTextEntry}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              style={styles.toggleButton}
-              hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
-              onPress={() => setSecureTextEntry(!secureTextEntry)}>
-              <Icon name={secureTextEntry ? 'eye' : 'eye-off'} size={20} />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      {errors.password && (
-        <Text style={styles.error}>{errors.password.message}</Text>
-      )}
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      <LoginForm onSubmit={onSubmit} isLoading={isLoading} />
     </View>
   );
 };
