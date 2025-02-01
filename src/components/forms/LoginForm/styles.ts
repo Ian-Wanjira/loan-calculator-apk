@@ -1,16 +1,19 @@
 import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  button: {
-    width: '100%',
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+  form: {
+    gap: 8,
+    padding: 16,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  signUpContainer: {
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: 14,
+    color: '#333',
+  },
+  signUpText: {
+    color: '#007BFF',
+    textDecorationLine: 'underline',
   },
 });
 
