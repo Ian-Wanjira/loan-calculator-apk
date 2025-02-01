@@ -1,11 +1,11 @@
 // components/forms/LoginForm.tsx
 import React from 'react';
-import {View} from 'react-native';
+import {View, Text} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {FormControl} from '../../FormControl';
 import {loginSchema} from '../../../utils/validations';
-
+import {styles} from './styles';
 import {Button} from '../../Button';
 
 interface LoginFormInputs {
@@ -28,7 +28,7 @@ const LoginForm: React.FC<LoginFormProps> = ({onSubmit, isLoading}) => {
   });
 
   return (
-    <View>
+    <View style={styles.form}>
       <FormControl
         type="textInput"
         control={control}
@@ -53,6 +53,12 @@ const LoginForm: React.FC<LoginFormProps> = ({onSubmit, isLoading}) => {
         isLoading={isLoading}
         onPress={handleSubmit(onSubmit)}
       />
+      <Text style={styles.signUpContainer}>
+        Don't have an account?{' '}
+        <Text style={styles.signUpText} onPress={() => console.log('Sign up')}>
+          Sign up
+        </Text>
+      </Text>
     </View>
   );
 };
