@@ -34,6 +34,15 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: 'red',
   },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  picker: {
+    height: 53,
+  },
 });
 
 export {styles};
