@@ -1,45 +1,55 @@
 import React, {useState} from 'react';
-import {Alert, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {LoginForm} from '../../components/forms/LoginForm/LoginForm';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {styles} from './styles';
 import {useAuth} from '../../context';
 import {userLogin} from '../../apis/userApi';
 import {useNavigation} from '@react-navigation/native';
-
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
+import {LoginFormInputs} from '../../components/forms/LoginForm/LoginForm';
+import {getApiError} from '../../utils/errorController';
+import axios from 'axios';
 
 const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {login} = useAuth();
+  // Global error state for login failures
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   // Access navigation object from React Navigation
   const navigation = useNavigation();
 
   const onSubmit = async (data: LoginFormInputs) => {
     setIsLoading(true);
+    setGlobalError(null); // Reset any previous error
     try {
-      const response = await userLogin(data.email, data.password);
-      // Store tokens in AsyncStorage
-      console.log('Access Token:', response.access);
-      console.log('Refresh Token:', response.refresh);
-      await AsyncStorage.setItem('accessToken', response.access);
-      await AsyncStorage.setItem('refreshToken', response.refresh);
-      login();
+      const response = await userLogin({data});
+      login(response.access, response.refresh);
     } catch (error) {
-      // Handle error within the component (e.g., set an error state)
-      console.error('Login failed:', error);
-      Alert.alert('Login Failed', 'An error occurred during login.');
+      // If the error has a global "detail" message, use that.
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.data &&
+        typeof error.response.data === 'object' &&
+        error.response.data.detail
+      ) {
+        const message = getApiError(error.response.data.detail);
+        setGlobalError(message);
+      } else {
+        const message = getApiError((error as any)?.message);
+        setGlobalError(message);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Loan Calculator</Text>
+      <Text style={styles.title}>Login Screen</Text>
+      {/* Display global error message if one exists */}
+      {globalError && <Text style={styles.globalErrorText}>{globalError}</Text>}
       <LoginForm
         onSubmit={onSubmit}
         isLoading={isLoading}
