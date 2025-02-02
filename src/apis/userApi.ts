@@ -1,7 +1,6 @@
 import {API_URL} from '@env';
 import axios from 'axios';
 import {LoginResponse, RegisterResponse} from '../types/api';
-import {axiosErrorHandler} from '../utils/errorController';
 import {LoginFormInputs} from '../components/forms/LoginForm/LoginForm';
 import {RegisterFormInputs} from '../components/forms/RegisterForm/RegisterForm';
 
