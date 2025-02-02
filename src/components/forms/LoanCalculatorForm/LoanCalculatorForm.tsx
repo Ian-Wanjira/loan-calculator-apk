@@ -9,6 +9,7 @@ import {Button} from '../../Button';
 import {CompoundOption, PaybackOption} from '../../../types/api';
 
 const compoundOptions = [
+  {label: 'Annually (APY)', value: 'Annually (APY)'},
   {label: 'Semi-annually', value: 'Semi-annually'},
   {label: 'Quarterly', value: 'Quarterly'},
   {label: 'Monthly (APR)', value: 'Monthly (APR)'},
