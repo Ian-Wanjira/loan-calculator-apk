@@ -1,20 +1,23 @@
 // components/forms/LoginForm.tsx
 import React from 'react';
 import {View, Text} from 'react-native';
-import {useForm} from 'react-hook-form';
+import {useForm, UseFormSetError} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {FormControl} from '../../FormControl';
 import {loginSchema} from '../../../utils/validations';
 import {styles} from './styles';
 import {Button} from '../../Button';
 
-interface LoginFormInputs {
+export interface LoginFormInputs {
   email: string;
   password: string;
 }
 
 interface LoginFormProps {
-  onSubmit: (data: LoginFormInputs) => void;
+  onSubmit: (
+    data: LoginFormInputs,
+    setError: UseFormSetError<LoginFormInputs>,
+  ) => void;
   isLoading: boolean;
   onSignUpPress: () => void;
 }
@@ -27,10 +30,15 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const {
     control,
     handleSubmit,
+    setError,
     formState: {errors},
   } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
   });
+
+  const onLocalSubmit = (data: LoginFormInputs) => {
+    onSubmit(data, setError);
+  };
 
   return (
     <View style={styles.form}>
@@ -56,7 +64,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
       <Button
         title="Login"
         isLoading={isLoading}
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(onLocalSubmit)}
       />
       <Text style={styles.signUpContainer}>
         Don't have an account?{' '}
