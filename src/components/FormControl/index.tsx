@@ -37,9 +37,10 @@ const FormControl: React.FC<FormControlProps> = props => {
     textInputProps,
   } = props;
 
-  // For password fields, secure entry is enabled by default.
-  const isPassword = name === 'password';
-  const [secureTextEntry, setSecureTextEntry] = useState(isPassword);
+  // Instead of just checking for 'password', check whether the field name includes 'password'
+  const isSecureField = name.toLowerCase().includes('password');
+
+  const [secureTextEntry, setSecureTextEntry] = useState(isSecureField);
 
   return (
     <View>
@@ -57,10 +58,10 @@ const FormControl: React.FC<FormControlProps> = props => {
                 value={value}
                 placeholder={placeholder}
                 {...textInputProps} // Spread any additional TextInput props
-                secureTextEntry={isPassword ? secureTextEntry : false}
+                secureTextEntry={isSecureField ? secureTextEntry : false}
               />
               {/* Display the password toggle icon only for password fields  */}
-              {isPassword && (
+              {isSecureField && (
                 <TouchableOpacity
                   onPress={() => setSecureTextEntry(!secureTextEntry)}
                   style={styles.iconButton}
@@ -71,7 +72,7 @@ const FormControl: React.FC<FormControlProps> = props => {
                 </TouchableOpacity>
               )}
               {/* Display a custom icon if provided and not a password field */}
-              {icon && !isPassword && (
+              {icon && !isSecureField && (
                 <Icon name={icon as any} size={20} style={styles.iconButton} />
               )}
             </View>
