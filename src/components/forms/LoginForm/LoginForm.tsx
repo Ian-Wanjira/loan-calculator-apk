@@ -1,4 +1,3 @@
-// components/forms/LoginForm.tsx
 import React from 'react';
 import {View, Text} from 'react-native';
 import {useForm, UseFormSetError} from 'react-hook-form';
