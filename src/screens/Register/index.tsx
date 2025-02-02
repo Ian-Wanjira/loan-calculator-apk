@@ -4,7 +4,6 @@ import {styles} from './styles';
 import {RegisterForm} from '../../components/forms/RegisterForm/RegisterForm';
 import {getApiError} from '../../utils/errorController';
 
-import {useAuth} from '../../context';
 import {registerUser} from '../../apis/userApi';
 import {useNavigation} from '@react-navigation/native';
 import {RegisterFormInputs} from '../../components/forms/RegisterForm/RegisterForm';
@@ -12,7 +11,6 @@ import axios from 'axios';
 
 const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const {login} = useAuth();
 
   // Access navigation object from React Navigation
   const navigation = useNavigation();
@@ -23,7 +21,6 @@ const Register: React.FC = () => {
       const response = await registerUser({data});
 
       if (response) {
-        login();
         navigation.navigate('Login');
       }
     } catch (error) {
