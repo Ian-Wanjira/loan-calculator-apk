@@ -1,26 +1,21 @@
 import {isAxiosError} from 'axios';
 
-export const getApiError = (message: string[] | string) => {
-  try {
-    if (Array.isArray(message)) {
-      return message[0];
-    } else if (message) {
-      return message;
-    } else {
-      return 'Something went wrong';
-    }
-  } catch (error) {
-    return 'Something went wrong';
+export const getApiError = (message: string[] | string | undefined): string => {
+  if (Array.isArray(message) && message.length > 0) {
+    return message[0];
   }
+  if (typeof message === 'string' && message) {
+    return message;
+  }
+  return 'Something went wrong';
 };
 
-export const axiosErrorHandler = (error: any) => {
+export const axiosErrorHandler = (error: any): string => {
   if (isAxiosError(error)) {
-    const err = error.response?.data?.message;
-    if (typeof err === 'string') return err;
-    if (Array.isArray(err)) return;
-    return typeof err === 'string' ? err : 'Something went wrong';
-  } else {
-    return getApiError(error);
+    // Note: This is for global error messages.
+    const errMessage = error.response?.data?.message;
+    return getApiError(errMessage);
   }
+  // For non-Axios errors, try to extract an error message
+  return getApiError(error?.message);
 };
