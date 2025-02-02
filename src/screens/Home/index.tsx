@@ -10,12 +10,16 @@ import {
 } from '../../components/forms/LoanCalculatorForm/LoanCalculatorForm';
 import {getApiError} from '../../utils/errorController';
 import {calculateLoan} from '../../apis/loanCalculatorApi';
+import {useLoan} from '../../context/LoanContext';
+import {Header} from '../../components/Header';
+import {useAuth} from '../../context';
 
 const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const {setLoanData} = useLoan();
   // Global error state for calculation failures
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const {logout} = useAuth();
 
   // Access navigation object from React Navigation
   const navigation = useNavigation();
@@ -33,9 +37,18 @@ const Home: React.FC = () => {
       const response = await calculateLoan(data);
       console.log('Response:', response);
 
-      if (response) {
-        navigation.navigate('Results');
+      // Validate the response
+      if (
+        !response ||
+        typeof response.paymentEveryMonth !== 'number' ||
+        typeof response.totalPayments !== 'number' ||
+        typeof response.totalInterest !== 'number' ||
+        !Array.isArray(response.amortizationSchedule)
+      ) {
+        throw new Error('Invalid loan calculation response');
       }
+      setLoanData(response); // Store the loan data in context
+      navigation.navigate('Results'); // Navigate to Results screen
     } catch (error) {
       // If the error has a global "detail" message, use that.
       console.log('Error:', error);
@@ -57,15 +70,24 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Loan Calculator</Text>
-      {/* Display global error message if one exists */}
-      {globalError && <Text style={styles.globalErrorText}>{globalError}</Text>}
-      <LoanCalculatorForm onSubmit={onSubmit} isLoading={isLoading} />
-    </ScrollView>
+    <>
+      <Header title="Home" onLogoutPress={handleLogout} />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>Loan Calculator</Text>
+        {/* Display global error message if one exists */}
+        {globalError && (
+          <Text style={styles.globalErrorText}>{globalError}</Text>
+        )}
+        <LoanCalculatorForm onSubmit={onSubmit} isLoading={isLoading} />
+      </ScrollView>
+    </>
   );
 };
 
