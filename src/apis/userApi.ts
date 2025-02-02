@@ -1,15 +1,17 @@
 import {API_URL} from '@env';
 import axios from 'axios';
-import {LoginResponse} from '../types/api';
+import {LoginResponse, RegisterResponse} from '../types/api';
 import {axiosErrorHandler} from '../utils/errorController';
+import {LoginFormInputs} from '../components/forms/LoginForm/LoginForm';
+import {RegisterFormInputs} from '../components/forms/RegisterForm/RegisterForm';
 
-export const userLogin = async (email: string, password: string) => {
-  console.log('userLogin called with:', email, password);
+export const userLogin = async ({data}: {data: LoginFormInputs}) => {
+  console.log('userLogin called with:', data);
   console.log('API_URL', API_URL);
   try {
     const payload = {
-      email: email,
-      password: password,
+      email: data.email,
+      password: data.password,
     };
     console.log('payload', payload);
     const response = await axios.post<LoginResponse>(
@@ -21,6 +23,23 @@ export const userLogin = async (email: string, password: string) => {
 
     return response.data;
   } catch (error) {
-    throw axiosErrorHandler(error);
+    throw error;
+  }
+};
+
+export const registerUser = async ({data}: {data: RegisterFormInputs}) => {
+  try {
+    const payload = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    };
+    const response = await axios.post<RegisterResponse>(
+      `${API_URL}/api/accounts/register/`,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };
