@@ -77,15 +77,20 @@ const FormControl: React.FC<FormControlProps> = props => {
               )}
             </View>
           ) : (
-            <Picker selectedValue={value} onValueChange={onChange}>
-              {options?.map(option => (
-                <Picker.Item
-                  key={option.value}
-                  label={option.label}
-                  value={option.value}
-                />
-              ))}
-            </Picker>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={value}
+                onValueChange={onChange}
+                style={styles.picker}>
+                {options?.map(option => (
+                  <Picker.Item
+                    key={option.value}
+                    label={option.label}
+                    value={option.value}
+                  />
+                ))}
+              </Picker>
+            </View>
           )
         }
       />
