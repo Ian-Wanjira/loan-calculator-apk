@@ -51,3 +51,7 @@ export const transformLoanCalculatorRequest = ({
     pay_back: apiRequest.payBack,
   };
 };
+
+export const getYearForPeriod = (period: number) => {
+  return Math.ceil(period / 12);
+};
